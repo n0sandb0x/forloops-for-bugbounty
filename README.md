@@ -1,4 +1,4 @@
-# loops and one liners for bug bounty 
+# FOr loops and one liners for bug bounty 
 Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
 
 
