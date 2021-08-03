@@ -1,4 +1,4 @@
-# FOr loops and one liners for bug bounty 
+# For loops and one liners for bug bounty 
 Credits goes to all those awesome researchers who uploaded these on Twitter and their GitHub  
 
 
@@ -45,7 +45,48 @@ gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https:
 ************************************************************************************************************************************
 
 
-## For AssetDiscovery with subdomains, 
+## For Finding Subdomains AssetDiscovery  
+
+### One liner to fetch all URLs in scope of all public programs @_ayoubfathi_
+
+```bash
+curl -s https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/hackerone_data.json | jq -r '.[].targets.in_scope[] | select(.asset_type|contains("URL")) | .asset_identifier' |grep -v "*" | sort
+```
+
+
+### From Bounty Targets Data @dwisiswant0
+
+For Hackerone
+```bash
+curl -sL https://github.com/arkadiyt/bounty-targets-data/blob/master/data/hackerone_data.json?raw=true | jq -r '.[].targets.in_scope[] | [.asset_identifier, .asset_type] | @tsv'
+
+```
+For Bugcrowd
+```bash
+curl -sL https://github.com/arkadiyt/bounty-targets-data/raw/master/data/bugcrowd_data.json | jq -r '.[].targets.in_scope[] | [.target, .type] | @tsv'
+
+```
+For Intigriti
+```bash
+curl -sL https://github.com/arkadiyt/bounty-targets-data/raw/master/data/intigriti_data.json | jq -r '.[].targets.in_scope[] | [.endpoint, .type] | @tsv'
+
+```
+
+### For Finding ASN's of a ORG using amass @KingOFBugBounty
+```bash
+amass intel -org paypal -max-dns-queries 2500 | awk -F, '{print $1}' ORS=',' | sed 's/,$//' | xargs -P3 -I@ -d ',' amass intel -asn @ -max-dns-queries 2500''
+
+```
+
+### While Loop For Subfinder To Discovery new Subdoamins it will run Every 2 hours
+
+```bash
+while true; do subfinder -dL domains.txt -all | anew subdomains1.txt | httpx | notify ; sleep 7200; done
+```
+Note: Before running the above command make sure you do the below first:
+Run `subfinder -dL domains.txt -all >> subdomains1.txt`
+
+Install nuclei, subfinder, Notify and anew
 
 
 ### Brute Force List of subdomains using FFuf
@@ -54,21 +95,9 @@ gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https:
 for url in ` cat $filename `; do ffuf -c -w path.txt -u $url/FUZZ -o result.json ; done >> result.txt
 ```
 
-### While Loop For Subfinder To Discovery new Subdoamins
 
-```bash
-while true; do subfinder -dL domains.txt -all | anew subdomains1.txt | httpx | notify ; sleep 4600; done
-```
-Note: Before running the above command make sure you do the below first:
-Run `subfinder -dL domains.txt -all >> subdomains1.txt`
 
-Install nuclei, subfinder, Notify and anew
 
-### One liner to fetch all URLs in scope of all public programs @_ayoubfathi_
-
-```bash
-curl -s https://raw.githubusercontent.com/arkadiyt/bounty-targets-data/master/data/hackerone_data.json | jq -r '.[].targets.in_scope[] | select(.asset_type|contains("URL")) | .asset_identifier' |grep -v "*" | sort
-```
 
 If you are getting error jq not found then 
 sudo apt-get install jq
