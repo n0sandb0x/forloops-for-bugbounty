@@ -49,7 +49,7 @@ gospider -S domain.txt -t 3 -c 100 |  tr " " "\n" | grep -v ".js" | grep "https:
 
 ### For making a huge wordlist of subdomains with Rapid 7 FDNS @m4ll0k
 
-Download the zip file from here
+Download the zip file from here https://opendata.rapid7.com/sonar.fdns_v2/
 ```bash
 gzip -dc latestfile-fdns_a.json.gz | jq .name | sed 's/"//g' | xargs -I @bash -c 'tldextract @' | awk '{print $1}' >> mysubs.txt 
 ```
